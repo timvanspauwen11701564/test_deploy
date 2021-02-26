@@ -2,18 +2,27 @@ provider "aws" {
   region = "us-west-2"
 }
  
-data "aws_ami" "ubuntu" {
+data "aws_ami" "aws-linux" {
   most_recent = true
- 
+  owners      = ["amazon"]
+
   filter {
     name   = "name"
-    values = ["ubuntu/images/hvm-ssd/ubuntu-bionic-18.04-amd64-server-*"]
+    values = ["amzn-ami-hvm*"]
   }
- 
-  owners = ["099720109477"]
+
+  filter {
+    name   = "root-device-type"
+    values = ["ebs"]
+  }
+
+  filter {
+    name   = "virtualization-type"
+    values = ["hvm"]
+  }
 }
  
 resource "aws_instance" "helloworld" {
-    ami = data.aws_ami.ubuntu.id
+    ami = data.aws_ami.aws-linux.id
     instance_type = "t2.micro"
 }
